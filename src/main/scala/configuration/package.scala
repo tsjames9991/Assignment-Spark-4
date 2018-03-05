@@ -1,11 +1,9 @@
 import java.util.Properties
-
 import org.apache.log4j.Logger
-import org.apache.spark.{SparkConf, SparkContext}
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.types.{LongType, StringType, StructField, StructType}
 import org.apache.spark.streaming.{Duration, StreamingContext}
-
+import org.apache.spark.{SparkConf, SparkContext}
 
 /**
   * Configuration File of the Twitter account.
@@ -34,8 +32,10 @@ package object configuration {
     StructField("Tweet", StringType, nullable = false)::
     StructField("Count", LongType, nullable = false) :: Nil
   )
-  case class TweetCount(
-                         tweet: String,
+  case class TweetCount(tweet: String,
                          count: Int
-                       )
+                       ) {
+    def filter(p: TweetCount => Boolean): TweetCount = ???
+    def foreach[U](f: TweetCount => U): Unit = ???
+  }
 }
