@@ -2,7 +2,7 @@ import java.util.Properties
 import org.apache.log4j.Logger
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.types.{LongType, StringType, StructField, StructType}
-import org.apache.spark.streaming.{Duration, StreamingContext}
+import org.apache.spark.streaming.{Seconds, StreamingContext}
 import org.apache.spark.{SparkConf, SparkContext}
 
 /**
@@ -11,8 +11,8 @@ import org.apache.spark.{SparkConf, SparkContext}
 
 package object configuration {
 
-  val SLIDEITNERVAL = new Duration(1 * 1000)
-  val WINDOWLENGTH = new Duration(5 * 1000)
+  val SLIDEITNERVAL = Seconds(1)
+  val WINDOWLENGTH = Seconds(5)
   val Log = Logger.getLogger(this.getClass)
   val URL = s"jdbc:postgresql://localhost:5432/knoldus"
   val table = "hashcounts"
@@ -24,7 +24,7 @@ package object configuration {
   val ssc = new StreamingContext(sc, SLIDEITNERVAL)
   val context = new SparkContext("local", "Operations")
   val prop = new Properties
-  prop.setProperty("driver", "com.mysql.jdbc.Driver")
+  prop.setProperty("driver", "com.postgres.jdbc.Driver")
   prop.getProperty("user", "root")
   prop.getProperty("password", "pw")
   val struct = StructType(

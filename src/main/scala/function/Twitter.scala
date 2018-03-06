@@ -23,10 +23,10 @@ class Twitter {
 
   def countHashTags(): Unit = {
     var num = 1
-    val row: List[Row] = List()
     val hashTagStream = tweets.flatMap(status => status.getText.split(" ").filter(_.startsWith("#")))
     val hashTagCountStream = hashTagStream.map((_, 1)).reduceByKeyAndWindow((x: Int, y: Int) => x + y, WINDOWLENGTH, SLIDEITNERVAL)
     hashTagCountStream.foreachRDD(hashTagCount => {
+      val row: List[Row] = List()
       val topHashTags: TweetCount = hashTagCount.top(3)(Comparision).toList.asInstanceOf[TweetCount]
       for (instance: TweetCount <- topHashTags) {
         Row("WindowID" -> num, "Tweet" -> instance.tweet, "Count" -> instance.count) :: row
@@ -42,11 +42,11 @@ class Twitter {
     ssc.awaitTermination()
   }
 
-  def writeToPostgres(frame: DataFrame): Unit = {
+  private def writeToPostgres(frame: DataFrame): Unit = {
     frame.write.mode("append").jdbc(URL, table, prop)
   }
 
-  object Comparision extends Ordering[(String, Int)] {
+  private object Comparision extends Ordering[(String, Int)] {
     def compare(a: (String, Int), b: (String, Int)): Int = {
       a._2 compare b._2
     }
