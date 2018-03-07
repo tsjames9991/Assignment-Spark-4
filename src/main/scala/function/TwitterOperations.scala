@@ -1,13 +1,13 @@
 package function
 
 import configuration._
-import org.apache.spark.sql.{DataFrame, Row}
+import org.apache.spark.sql.{DataFrame, Row, SQLContext}
 import org.apache.spark.streaming.dstream.ReceiverInputDStream
 import org.apache.spark.streaming.twitter._
 import twitter4j.auth.AccessToken
 import twitter4j.{Status, TwitterFactory}
 
-class Twitter {
+class TwitterOperations {
 
   val twitter = new TwitterFactory().getInstance()
   twitter.setOAuthConsumer(CONSUMERKEY, CONSUMERSECRET)
@@ -31,7 +31,8 @@ class Twitter {
       for (instance: TweetCount <- topHashTags) {
         Row("WindowID" -> num, "Tweet" -> instance.tweet, "Count" -> instance.count) :: row
       }
-      writeToPostgres(spark.sqlContext.createDataFrame(context.parallelize(row), struct))
+      val sqlContext = new SQLContext(context)
+      writeToPostgres(sqlContext.createDataFrame(context.parallelize(row), struct))
       Log.info(s"\nTOP HASHTAGS For Window ${num}")
       for (instance: TweetCount <- topHashTags) {
         Log.info(s"\nTweet : ${instance.tweet}, Count : ${instance.count}")
