@@ -31,5 +31,3 @@ projectFilesBackup
 
 metastore_db/
 check*/
-
-src/main/scala/configuration

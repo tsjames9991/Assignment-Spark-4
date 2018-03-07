@@ -12,7 +12,7 @@ class Twitter {
   val twitter = new TwitterFactory().getInstance()
   twitter.setOAuthConsumer(CONSUMERKEY, CONSUMERSECRET)
   twitter.setOAuthAccessToken(new AccessToken(ACCESSTOKEN, ACCESSTOKENKEY))
-  val tweets:ReceiverInputDStream[Status] = TwitterUtils.createStream(ssc, Some(twitter.getAuthorization()))
+  val tweets:ReceiverInputDStream[Status] = TwitterUtils.createStream(ssc, None)
 
   def getTweets(): Unit = {
     val statuses = tweets.map(status => status.getText())
@@ -32,7 +32,7 @@ class Twitter {
         Row("WindowID" -> num, "Tweet" -> instance.tweet, "Count" -> instance.count) :: row
       }
       writeToPostgres(spark.sqlContext.createDataFrame(context.parallelize(row), struct))
-      Log.info(s"\nTOP HASHTAGS For window ${num}")
+      Log.info(s"\nTOP HASHTAGS For Window ${num}")
       for (instance: TweetCount <- topHashTags) {
         Log.info(s"\nTweet : ${instance.tweet}, Count : ${instance.count}")
       }

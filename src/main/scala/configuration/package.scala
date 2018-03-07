@@ -1,4 +1,5 @@
 import java.util.Properties
+
 import org.apache.log4j.Logger
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.types.{LongType, StringType, StructField, StructType}
@@ -10,9 +11,10 @@ import org.apache.spark.{SparkConf, SparkContext}
   */
 
 package object configuration {
-
-  val SLIDEITNERVAL = Seconds(1)
-  val WINDOWLENGTH = Seconds(5)
+  val INITIALTIME = 1
+  val FINALTIME = 5
+  val SLIDEITNERVAL = Seconds(INITIALTIME)
+  val WINDOWLENGTH = Seconds(FINALTIME)
   val Log = Logger.getLogger(this.getClass)
   val URL = s"jdbc:postgresql://localhost:5432/knoldus"
   val table = "hashcounts"
@@ -24,18 +26,20 @@ package object configuration {
   val ssc = new StreamingContext(sc, SLIDEITNERVAL)
   val context = new SparkContext("local", "Operations")
   val prop = new Properties
-  prop.setProperty("driver", "com.postgres.jdbc.Driver")
-  prop.getProperty("user", "root")
-  prop.getProperty("password", "pw")
+  prop.setProperty("driver", "com.postgresql.jdbc.Driver")
+  prop.getProperty("user", "knoldus")
+  prop.getProperty("password", "knoldus")
   val struct = StructType(
-    StructField("WindowID", LongType, nullable = false)::
-    StructField("Tweet", StringType, nullable = false)::
-    StructField("Count", LongType, nullable = false) :: Nil
+    StructField("WindowID", LongType, nullable = false) ::
+      StructField("Tweet", StringType, nullable = false) ::
+      StructField("Count", LongType, nullable = false) :: Nil
   )
+
   case class TweetCount(tweet: String,
-                         count: Int
+                        count: Int
                        ) {
     def filter(p: TweetCount => Boolean): TweetCount = ???
+
     def foreach[U](f: TweetCount => U): Unit = ???
   }
 }
