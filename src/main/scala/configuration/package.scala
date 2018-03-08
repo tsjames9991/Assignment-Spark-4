@@ -10,6 +10,10 @@ import org.apache.spark.{SparkConf, SparkContext}
   */
 
 package object configuration {
+  val CONSUMERKEY = "bN5iepekOZwVM4Gp99BXX95d4"
+  val CONSUMERSECRET = "DmjyN9zJ9ZMPpPW5uLbCv67ulZx0nCOnklqSnGZqx1h7M6mZpq"
+  val ACCESSTOKEN = "83770216-zM4p3zQl7iLxwTozXsQhg7PzE4xQu2sudarGHRF5l"
+  val ACCESSTOKENKEY = "PlcZagn97UKzcYZpMdpIz7jEOuKpdJ1pL7L2lO4eDldnB"
   val INITIALTIME = 1
   val FINALTIME = 5
   val SLIDEITNERVAL = Seconds(INITIALTIME)
@@ -17,9 +21,10 @@ package object configuration {
   val Log = Logger.getLogger(this.getClass)
   val URL = s"jdbc:postgresql://localhost:5432/knoldus"
   val table = "hashcounts"
-  val sc = new SparkConf().setAppName("TwitterApp").setMaster("local").set("spark.driver.allowMultipleContexts", "true")
+  val sc = new SparkConf().setAppName("TwitterApp").setMaster("local[4]")
   val ssc = new StreamingContext(sc, SLIDEITNERVAL)
   val context = new SparkContext("local", "Operations")
+  context.setLogLevel("WARN")
   val prop = new Properties
   prop.setProperty("driver", "org.postgresql.Driver")
   prop.getProperty("user", "knoldus")
